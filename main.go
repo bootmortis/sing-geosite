@@ -54,10 +54,10 @@ func get(downloadURL *string) ([]byte, error) {
 
 func download(release *github.RepositoryRelease) ([]byte, error) {
 	geositeAsset := common.Find(release.Assets, func(it *github.ReleaseAsset) bool {
-		return *it.Name == "dlc.dat"
+		return *it.Name == "iran.dat"
 	})
 	geositeChecksumAsset := common.Find(release.Assets, func(it *github.ReleaseAsset) bool {
-		return *it.Name == "dlc.dat.sha256sum"
+		return *it.Name == "iran.dat.sha256"
 	})
 	if geositeAsset == nil {
 		return nil, E.New("geosite asset not found in upstream release ", release.Name)
@@ -184,35 +184,22 @@ func generate(release *github.RepositoryRelease, output string) error {
 	return geosite.Write(outputFile, domainMap)
 }
 
-func setActionOutput(name string, content string) {
-	os.Stdout.WriteString("::set-output name=" + name + "::" + content + "\n")
-}
-
-func release(source string, destination string, output string) error {
+func release(source string, output string) error {
 	sourceRelease, err := fetch(source)
 	if err != nil {
 		return err
 	}
-	destinationRelease, err := fetch(destination)
-	if err != nil {
-		logrus.Warn("missing destination latest release")
-	} else {
-		if os.Getenv("NO_SKIP") != "true" && strings.Contains(*destinationRelease.Name, *sourceRelease.Name) {
-			logrus.Info("already latest")
-			setActionOutput("skip", "true")
-			return nil
-		}
-	}
+
 	err = generate(sourceRelease, output)
 	if err != nil {
 		return err
 	}
-	setActionOutput("tag", *sourceRelease.Name)
+
 	return nil
 }
 
 func main() {
-	err := release("v2fly/domain-list-community", "sagernet/sing-geosite", "geosite.db")
+	err := release("bootmortis/iran-hosted-domains", "iran-geosite.db")
 	if err != nil {
 		logrus.Fatal(err)
 	}
