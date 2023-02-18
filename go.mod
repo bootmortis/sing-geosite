@@ -3,7 +3,6 @@ module sing-geosite
 go 1.18
 
 require (
-	github.com/google/go-github/v45 v45.2.0
 	github.com/sagernet/sing v0.0.0-20220913004915-27ddefbb8921
 	github.com/sagernet/sing-box v1.0.6
 	github.com/sirupsen/logrus v1.9.0
@@ -17,7 +16,6 @@ require (
 	github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0 // indirect
 	github.com/golang/mock v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/marten-seemann/qpack v0.2.1 // indirect
 	github.com/marten-seemann/qtls-go1-18 v0.1.2 // indirect
 	github.com/marten-seemann/qtls-go1-19 v0.1.0 // indirect

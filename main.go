@@ -1,84 +1,17 @@
 package main
 
 import (
-	"context"
-	"crypto/sha256"
-	"encoding/hex"
-	"io"
-	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/google/go-github/v45/github"
 	"github.com/sagernet/sing-box/common/geosite"
 	"github.com/sagernet/sing/common"
-	E "github.com/sagernet/sing/common/exceptions"
+
 	"github.com/sirupsen/logrus"
 	"github.com/v2fly/v2ray-core/v5/app/router/routercommon"
 	"google.golang.org/protobuf/proto"
 )
-
-var githubClient *github.Client
-
-func init() {
-	accessToken, loaded := os.LookupEnv("ACCESS_TOKEN")
-	if !loaded {
-		githubClient = github.NewClient(nil)
-		return
-	}
-	transport := &github.BasicAuthTransport{
-		Username: accessToken,
-	}
-	githubClient = github.NewClient(transport.Client())
-}
-
-func fetch(from string) (*github.RepositoryRelease, error) {
-	names := strings.SplitN(from, "/", 2)
-	latestRelease, _, err := githubClient.Repositories.GetLatestRelease(context.Background(), names[0], names[1])
-	if err != nil {
-		return nil, err
-	}
-	return latestRelease, err
-}
-
-func get(downloadURL *string) ([]byte, error) {
-	logrus.Info("download ", *downloadURL)
-	response, err := http.Get(*downloadURL)
-	if err != nil {
-		return nil, err
-	}
-	defer response.Body.Close()
-	return io.ReadAll(response.Body)
-}
-
-func download(release *github.RepositoryRelease) ([]byte, error) {
-	geositeAsset := common.Find(release.Assets, func(it *github.ReleaseAsset) bool {
-		return *it.Name == "iran.dat"
-	})
-	geositeChecksumAsset := common.Find(release.Assets, func(it *github.ReleaseAsset) bool {
-		return *it.Name == "iran.dat.sha256"
-	})
-	if geositeAsset == nil {
-		return nil, E.New("geosite asset not found in upstream release ", release.Name)
-	}
-	if geositeChecksumAsset == nil {
-		return nil, E.New("geosite asset not found in upstream release ", release.Name)
-	}
-	data, err := get(geositeAsset.BrowserDownloadURL)
-	if err != nil {
-		return nil, err
-	}
-	remoteChecksum, err := get(geositeChecksumAsset.BrowserDownloadURL)
-	if err != nil {
-		return nil, err
-	}
-	checksum := sha256.Sum256(data)
-	if hex.EncodeToString(checksum[:]) != string(remoteChecksum[:64]) {
-		return nil, E.New("checksum mismatch")
-	}
-	return data, nil
-}
 
 func parse(vGeositeData []byte) (map[string][]geosite.Item, error) {
 	vGeositeList := routercommon.GeoSiteList{}
@@ -165,13 +98,21 @@ func parse(vGeositeData []byte) (map[string][]geosite.Item, error) {
 	return domainMap, nil
 }
 
-func generate(release *github.RepositoryRelease, output string) error {
+func getData() ([]byte, error) {
+	data, err := os.ReadFile("data/iran.dat")
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+
+func generate(output string) error {
 	outputFile, err := os.Create(output)
 	if err != nil {
 		return err
 	}
 	defer outputFile.Close()
-	vData, err := download(release)
+	vData, err := getData()
 	if err != nil {
 		return err
 	}
@@ -185,12 +126,7 @@ func generate(release *github.RepositoryRelease, output string) error {
 }
 
 func release(source string, output string) error {
-	sourceRelease, err := fetch(source)
-	if err != nil {
-		return err
-	}
-
-	err = generate(sourceRelease, output)
+	err := generate(output)
 	if err != nil {
 		return err
 	}
