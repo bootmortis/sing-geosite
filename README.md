@@ -17,3 +17,6 @@ Used in https://github.com/bootmortis/iran-hosted-domains
 replace `<category>` with the category name. example URL:  
 
 `https://github.com/bootmortis/sing-geosite/releases/latest/download/geosite-ir.srs`  
+
+### Documents:
+- [Migrate Geosite to rule sets](https://sing-box.sagernet.org/migration/#migrate-geosite-to-rule-sets)
