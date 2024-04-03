@@ -18,11 +18,11 @@ Used in https://github.com/bootmortis/iran-hosted-domains
 
 ### Rule-set (v1.8 and later)
 `https://github.com/bootmortis/sing-geosite/releases/latest/download/geosite-<category>.srs`  
-- [config-sample.json](https://github.com/amin2plus/sing-geosite/blob/da3348fba5deed32272da24279f9a92f68fa43d5/singbox-config-example.json)
   
 replace `<category>` with the category name. example URL:  
-
 `https://github.com/bootmortis/sing-geosite/releases/latest/download/geosite-ir.srs`  
+
+- [config-sample.json](https://github.com/amin2plus/sing-geosite/blob/da3348fba5deed32272da24279f9a92f68fa43d5/singbox-config-example.json)
 
 ## Documents
 - [How to use geosite](https://github.com/bootmortis/iran-hosted-domains?tab=readme-ov-file#sing-box)
