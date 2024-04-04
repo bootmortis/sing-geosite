@@ -13,6 +13,8 @@ Used in https://github.com/bootmortis/iran-hosted-domains
 
 ## Usage
 
+For more info check [here](https://github.com/bootmortis/iran-hosted-domains?tab=readme-ov-file#sing-box).
+
 ### Geosite
 `https://github.com/bootmortis/iran-hosted-domains/releases/latest/download/iran-geosite.db`
 
